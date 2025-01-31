@@ -1,0 +1,129 @@
+/* Global Styles */
+:root {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #6a11cb, #2575fc); /* Updated Gradient */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+  text-align: center;
+  transition: background 0.5s ease;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+  text-align: center;
+  transition: background 0.5s ease;
+}
+
+/* Container for game */
+.game-container {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 15px;
+  padding: 20px;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Title */
+h1, h2, h3 {
+  color: #fff;
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Buttons */
+button {
+  background-color: #2575fc;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  background-color: #6a11cb;
+}
+
+/* Input Fields */
+input[type="text"], input[type="number"], select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  margin: 5px 0 15px;
+  width: 80%;
+  max-width: 300px;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+  outline: none;
+  border-color: #2575fc;
+  background-color: #fff;
+}
+
+/* Card-like Boxes */
+.card {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* Player List */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin: 5px 0;
+}
+
+/* Transition Effects for Elements */
+.fade-in {
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Style for the YouTube iframe */
+iframe {
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+iframe:hover {
+  transform: scale(1.05);
+}
