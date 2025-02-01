@@ -16,116 +16,143 @@ export default function HitsterGame() {
   const [roundLimit, setRoundLimit] = useState(0);
   const [roundCount, setRoundCount] = useState(0);
   const [turnCount, setTurnCount] = useState(1);
+  const [turnProgress, setTurnProgress] = useState(0); // New state to track player turns
   const [selectedPlaylist, setSelectedPlaylist] = useState("RockPlaylist");
   const [adminMode, setAdminMode] = useState(false);
-
+  const [showLeaderboardPopup, setShowLeaderboardPopup] = useState(false);
   
   const playlists = {
     RockPlaylist: [
-        { youtubeId: "beX-9wW5rL0", artist: "Weezer", title: "Island In The Sun", year: "2018" },
-        { youtubeId: "fJ9rUzIMcZQ", artist: "Queen", title: "Bohemian Rhapsody", year: "1975" },
-        { youtubeId: "1w7OgIMMRc4", artist: "Guns N' Roses", title: "Sweet Child O' Mine", year: "1987" },
-        { youtubeId: "hTWKbfoikeg", artist: "Nirvana", title: "Smells Like Teen Spirit", year: "1991" },
-        { youtubeId: "WpYeekQkAdc", artist: "The White Stripes", title: "Seven Nation Army", year: "2003" },
-        { youtubeId: "6vjR1R75nWE", artist: "AC/DC", title: "Back in Black", year: "1980" },
-        { youtubeId: "R8AOAap6_k4", artist: "Green Day", title: "Boulevard of Broken Dreams", year: "2004" },
-        { youtubeId: "eVTXPUF4Oz4", artist: "Linkin Park", title: "In The End", year: "2000" },
-        { youtubeId: "XFkzRNyygfk", artist: "Radiohead", title: "Creep", year: "1993" },
-        { youtubeId: "1CBNE25rveE", artist: "Foo Fighters", title: "Everlong", year: "1997" },
-        { youtubeId: "vabnZ9-ex7o", artist: "System of a Down", title: "Toxicity", year: "2001" },
-        { youtubeId: "CSvFpBOe8eY", artist: "System of a Down", title: "Chop Suey!", year: "2001" },
-        { youtubeId: "dxp9w9Ggehc", artist: "Linkin Park", title: "Numb", year: "2003" },
-        { youtubeId: "lL2ZwXj1tXM", artist: "Green Day", title: "American Idiot", year: "2004" },
-        { youtubeId: "NUTGr5t3MoY", artist: "Bon Jovi", title: "Livin' On A Prayer", year: "1986" },
-        { youtubeId: "E0ozmU9cJDg", artist: "Red Hot Chili Peppers", title: "Under The Bridge", year: "1992" },
-        { youtubeId: "qV5lzRHrGeg", artist: "Red Hot Chili Peppers", title: "Snow (Hey Oh)", year: "2006" },
-        { youtubeId: "YlUKcNNmywk", artist: "Red Hot Chili Peppers", title: "Californication", year: "1999" },
-        { youtubeId: "SBjQ9tuuTJQ", artist: "Foo Fighters", title: "The Pretender", year: "2007" },
-        { youtubeId: "z5vA9CwZKNY", artist: "The Killers", title: "Mr. Brightside", year: "2004" },
-        { youtubeId: "pAgnJDJN4VA", artist: "AC/DC", title: "Highway to Hell", year: "1979" },
-        { youtubeId: "62XiBR6-DEY", artist: "Iron Maiden", title: "The Trooper", year: "1983" },
-        { youtubeId: "tAGnKpE4NCI", artist: "Metallica", title: "Nothing Else Matters", year: "1991" },
-        { youtubeId: "CD-E-LDc384", artist: "Metallica", title: "Enter Sandman", year: "1991" },
-        { youtubeId: "bWXazVhlyxQ", artist: "Rage Against The Machine", title: "Killing In The Name", year: "1992" },
-        { youtubeId: "7QU1nvuxaMA", artist: "Audioslave", title: "Like a Stone", year: "2002" },
-        { youtubeId: "3YxaaGgTQYM", artist: "Evanescence", title: "Bring Me To Life", year: "2003" },
-        { youtubeId: "5QD5n98R_nk", artist: "Soundgarden", title: "Black Hole Sun", year: "1994" },
-        { youtubeId: "uelHwf8o7_U", artist: "Eminem", title: "Love The Way You Lie ft. Rihanna", year: "2010" },
-        { youtubeId: "SC4xMk98Pdc", artist: "Simple Plan", title: "Welcome To My Life", year: "2004" },
-        { youtubeId: "j0lSpNtjPM8", artist: "Fall Out Boy", title: "Sugar, We're Goin Down", year: "2005" },
-        { youtubeId: "eebfMFzJHNs", artist: "The Offspring", title: "The Kids Aren't Alright", year: "1998" },
-        { youtubeId: "ZyhrYis509A", artist: "Aqua", title: "Barbie Girl", year: "1997" },
-        { youtubeId: "LatorN4P9aA", artist: "My Chemical Romance", title: "Welcome to the Black Parade", year: "2006" },
-        { youtubeId: "gGdGFtwCNBE", artist: "Pearl Jam", title: "Even Flow", year: "1991" },
-        { youtubeId: "MW6E_TNgCsY", artist: "Staind", title: "It's Been Awhile", year: "2001" },
-        { youtubeId: "RiSfTyrvJlg", artist: "Papa Roach", title: "Last Resort", year: "2000" },
-        { youtubeId: "3mbBbFH9fAg", artist: "Korn", title: "Freak On a Leash", year: "1998" },
-        { youtubeId: "CUYxBEFKTsQ", artist: "The Smashing Pumpkins", title: "Today", year: "1993" },
-        { youtubeId: "4N3N1MlvVc4", artist: "Gary Jules", title: "Mad World", year: "2001" },
-        { youtubeId: "CO8vBVUaKvk", artist: "Thirty Seconds to Mars", title: "The Kill", year: "2005" },
-        { youtubeId: "ScNNfyq3d_w", artist: "Army of Anyone", title: "Father Figure", year: "2006" },
-        { youtubeId: "QNJL6nfu__Q", artist: "Breaking Benjamin", title: "The Diary of Jane", year: "2006" },
-        { youtubeId: "5NPBIwQyPWE", artist: "Incubus", title: "Wish You Were Here", year: "2001" },
-        { youtubeId: "xwtdhWltSIg", artist: "Red Hot Chili Peppers", title: "By the Way", year: "2002" },
-       //{ youtubeId: "VurhzAO3WVI", artist: "Alice In Chains", title: "Would?", year: "1992" },
-        { youtubeId: "vabnZ9-ex7o", artist: "System of a Down", title: "Chop Suey!", year: "2001" },
-        { youtubeId: "5_LxyhCJpsM", artist: "Godsmack", title: "I Stand Alone", year: "2002" },
-        { youtubeId: "RYnFIRc0k6E", artist: "Matchbox Twenty", title: "Push", year: "1996" },
-        { youtubeId: "ohgr7bu0gEE", artist: "Three Days Grace", title: "Animal I Have Become", year: "2006" },
-        { youtubeId: "1mjlM_RnsVE", artist: "Drowning Pool", title: "Bodies", year: "2001" }
+      { youtubeId: "erG5rgNYSdk", artist: "Weezer", title: "Island In The Sun", year: "2001" },
+      { youtubeId: "3gd8iBa5ag0", artist: "Queen", title: "Bohemian Rhapsody", year: "1975" },
+      { youtubeId: "1w7OgIMMRc4", artist: "Guns N' Roses", title: "Sweet Child O' Mine", year: "1987" },
+      { youtubeId: "hTWKbfoikeg", artist: "Nirvana", title: "Smells Like Teen Spirit", year: "1991" },
+      { youtubeId: "0J2QdDbelmY", artist: "The White Stripes", title: "Seven Nation Army", year: "2003" },
+      { youtubeId: "gYCTXzOTnXg", artist: "AC/DC", title: "Back in Black", year: "1980" },
+      { youtubeId: "gYCTXzOTnXg", artist: "Green Day", title: "Boulevard of Broken Dreams", year: "2004" },
+      { youtubeId: "eVTXPUF4Oz4", artist: "Linkin Park", title: "In The End", year: "2000" },
+      { youtubeId: "XFkzRNyygfk", artist: "Radiohead", title: "Creep", year: "1993" },
+      { youtubeId: "eBG7P-K-r1Y", artist: "Foo Fighters", title: "Everlong", year: "1997" },
+      { youtubeId: "vabnZ9-ex7o", artist: "System of a Down", title: "Toxicity", year: "2001" },
+      { youtubeId: "CSvFpBOe8eY", artist: "System of a Down", title: "Chop Suey!", year: "2001" },
+      { youtubeId: "dxp9w9Ggehc", artist: "Linkin Park", title: "Numb", year: "2003" },
+      { youtubeId: "Ee_uujKuJMI", artist: "Green Day", title: "American Idiot", year: "2004" },
+      { youtubeId: "lDK9QqIzhwk", artist: "Bon Jovi", title: "Livin' On A Prayer", year: "1986" },
+      { youtubeId: "E0ozmU9cJDg", artist: "Red Hot Chili Peppers", title: "GLvohMXgcBo", year: "1992" },
+      { youtubeId: "yuFI5KSPAt4", artist: "Red Hot Chili Peppers", title: "Snow (Hey Oh)", year: "2006" },
+      { youtubeId: "YlUKcNNmywk", artist: "Red Hot Chili Peppers", title: "Californication", year: "1999" },
+      { youtubeId: "SBjQ9tuuTJQ", artist: "Foo Fighters", title: "The Pretender", year: "2007" },
+      { youtubeId: "m2zUrruKjDQ", artist: "The Killers", title: "Mr. Brightside", year: "2004" },
+      { youtubeId: "l482T0yNkeo", artist: "AC/DC", title: "Highway to Hell", year: "1979" },
+      { youtubeId: "X4bgXH3sJ2Q", artist: "Iron Maiden", title: "The Trooper", year: "1983" },
+      { youtubeId: "tAGnKpE4NCI", artist: "Metallica", title: "Nothing Else Matters", year: "1991" },
+      { youtubeId: "CD-E-LDc384", artist: "Metallica", title: "Enter Sandman", year: "1991" },
+      { youtubeId: "bWXazVhlyxQ", artist: "Rage Against The Machine", title: "Killing In The Name", year: "1992" },
+      { youtubeId: "7QU1nvuxaMA", artist: "Audioslave", title: "Like a Stone", year: "2002" },
+      { youtubeId: "3YxaaGgTQYM", artist: "Evanescence", title: "Bring Me To Life", year: "2003" },
+      { youtubeId: "3mbBbFH9fAg", artist: "Soundgarden", title: "Black Hole Sun", year: "1994" },
+      { youtubeId: "hmCj7k2ZHuo", artist: "Simple Plan", title: "Welcome To My Life", year: "2004" },
+      { youtubeId: "MOdmNxjTh3Q", artist: "Fall Out Boy", title: "Sugar, We're Goin Down", year: "2005" },
+      { youtubeId: "eebfMFzJHNs", artist: "Green Day", title: "Warning", year: "2009" },
+      { youtubeId: "7iNbnineUCI", artist: "The Offspring", title: "The Kids Aren't Alright", year: "1998" },
+      { youtubeId: "RRKJiM9Njr8", artist: "My Chemical Romance", title: "Welcome to the Black Parade", year: "2006" },
+      { youtubeId: "CxKWTzr-k6s", artist: "Pearl Jam", title: "Even Flow", year: "1991" },
+      { youtubeId: "araU0fZj6oQ", artist: "Staind", title: "It's Been Awhile", year: "2001" },
+      { youtubeId: "PiihIwhjIvQ", artist: "Papa Roach", title: "Last Resort", year: "2000" },
+      { youtubeId: "jRGrNDV2mKc", artist: "Korn", title: "Freak On a Leash", year: "1998" },
+      { youtubeId: "xmUZ6nCFNoU", artist: "The Smashing Pumpkins", title: "Today", year: "1993" },
+      { youtubeId: "3c4_jTnsegM", artist: "Thirty Seconds to Mars", title: "The Kill", year: "2005" },
+      { youtubeId: "YB8ALvSUK_g", artist: "Army of Anyone", title: "Father Figure", year: "2006" },
+      { youtubeId: "DWaB4PXCwFU", artist: "Breaking Benjamin", title: "The Diary of Jane", year: "2006" },
+      { youtubeId: "8295rOMvtQI", artist: "Incubus", title: "Wish You Were Here", year: "2001" },
+      { youtubeId: "JnfyjwChuNU", artist: "Red Hot Chili Peppers", title: "By the Way", year: "2002" },
+      { youtubeId: "Nco_kh8xJDs", artist: "Alice In Chains", title: "Would?", year: "1992" },
+      { youtubeId: "CSvFpBOe8eY", artist: "System of a Down", title: "Chop Suey!", year: "2001" },
+      { youtubeId: "OYjZK_6i37M", artist: "Godsmack", title: "I Stand Alone", year: "2002" },
+      { youtubeId: "HAkHqYlqops", artist: "Matchbox Twenty", title: "Push", year: "1996" },
+      { youtubeId: "n9h7hU6_VI4", artist: "Three Days Grace", title: "Animal I Have Become", year: "2006" },
+      { youtubeId: "lL2ZwXj1tXM", artist: "Three Days Grace", title: "Never Too Late", year: "2006" },
+      { youtubeId: "04F4xlWSFh0E", artist: "Drowning Pool", title: "Bodies", year: "2001" },
+      { youtubeId: "HMUDVMiITOU", artist: "Skillet", title: "Monster", year: "2009" },
+      { youtubeId: "5NPBIwQyPWE", artist: "Avril Lavigne", title: "Complicated", year: "2010" },
+      { youtubeId: "NUTGr5t3MoY", artist: "Green Day", title: "Basket Case", year: "1994" },
+      { youtubeId: "E0ozmU9cJDg", artist: "Metallica", title: "Master Of Puppets", year: "1986" },
+      { youtubeId: "z5vA9CwZKNY", artist: "Hollywood Undead", title: "Everywhere I Go", year: "2009" },
+      { youtubeId: "QkF3oxziUI4", artist: "Led Zeppelin", title: "Stairway to Heaven", year: "1971" },
+      { youtubeId: "-tJYN-eG1zk", artist: "Queen", title: "We Will Rock You", year: " 1977" },
+      { youtubeId: "bx1Bh8ZvH84", artist: "Oasis", title: "Wonderwall", year: "1995" },
+      { youtubeId: "QkF3oxziUI4", artist: "Led Zeppelin", title: "Stairway to Heaven", year: "1971" },
+      { youtubeId: "vabnZ9-ex7o", artist: "Nirvana", title: "Come As You Are", year: "1991" },
       ],
     AllTimePopular: [
-      { youtubeId: "2Vv-BfVoq4g", artist: "Ed Sheeran", title: "Shape of You", year: "2017" },
+      { youtubeId: "Vds8ddYXYZY", artist: "Ed Sheeran", title: "Shape of You", year: "2017" },
   { youtubeId: "9bZkp7q19f0", artist: "PSY", title: "Gangnam Style", year: "2012" },
-  { youtubeId: "JGwWNGJdvx8", artist: "Ed Sheeran", title: "Castle on the Hill", year: "2017" },
-  { youtubeId: "kJQP7kiw5Fk", artist: "Luis Fonsi & Daddy Yankee ft. Justin Bieber", title: "Despacito", year: "2017" },
+  { youtubeId: "7Qp5vcuMIlk", artist: "Ed Sheeran", title: "Castle on the Hill", year: "2017" },
   { youtubeId: "RgKAFK5djSk", artist: "Wiz Khalifa ft. Charlie Puth", title: "See You Again", year: "2015" },
   { youtubeId: "OPf0YbXqDm0", artist: "Mark Ronson ft. Bruno Mars", title: "Uptown Funk", year: "2014" },
-  { youtubeId: "JRfuAukYTKg", artist: "The Weeknd", title: "Blinding Lights", year: "2019" },
+  { youtubeId: "fHI8X4OXluQ", artist: "The Weeknd", title: "Blinding Lights", year: "2019" },
   { youtubeId: "dQw4w9WgXcQ", artist: "Rick Astley", title: "Never Gonna Give You Up", year: "1987" },
   { youtubeId: "fRh_vgS2dFE", artist: "Justin Bieber", title: "Sorry", year: "2015" },
   { youtubeId: "IcrbM1l_BoI", artist: "Avicii", title: "Wake Me Up", year: "2013" },
-  { youtubeId: "YqeW9_5kURI", artist: "Taylor Swift", title: "Blank Space", year: "2014" },
-  { youtubeId: "KnL2RJZTdA4", artist: "The Weeknd", title: "Starboy", year: "2016" },
-  { youtubeId: "KlyXNRrsk4A", artist: "Shakira ft. Wyclef Jean", title: "Hips Don't Lie", year: "2006" },
+  { youtubeId: "uHpcbSsPrRE", artist: "Taylor Swift", title: "Blank Space", year: "2014" },
+  { youtubeId: "xizN47Box_Y", artist: "The Weeknd", title: "Starboy", year: "2016" },
+  { youtubeId: "DUT5rEU6pqM", artist: "Shakira ft. Wyclef Jean", title: "Hips Don't Lie", year: "2006" },
   { youtubeId: "4m1EFMoRFvY", artist: "Beyoncé", title: "Single Ladies", year: "2008" },
   { youtubeId: "YVkUvmDQ3HY", artist: "Eminem", title: "Without Me", year: "2002" },
-  { youtubeId: "pt8VYOfr8To", artist: "Taylor Swift", title: "Shake It Off", year: "2014" },
-  { youtubeId: "KEI4qSrkPAs", artist: "Lady Gaga", title: "Just Dance", year: "2008" },
-  { youtubeId: "1k8craCGpgs", artist: "Doja Cat", title: "Say So", year: "2020" },
-  { youtubeId: "PfGaX8G0f2E", artist: "Justin Bieber", title: "Baby ft. Ludacris", year: "2010" },
-  { youtubeId: "YykjpeuMNEk", artist: "Eurythmics", title: "Sweet Dreams", year: "1983" },
-  { youtubeId: "JV2s0UIPOQY", artist: "Michael Jackson", title: "Thriller", year: "1982" },
-  { youtubeId: "QH2-TGUlwu4", artist: "Nyan Cat", title: "Nyan Cat", year: "2011" },
-  { youtubeId: "1G4isv_Fylg", artist: "Bruno Mars", title: "Grenade", year: "2010" },
-  { youtubeId: "U0CGsw6h60k", artist: "LMFAO", title: "Party Rock Anthem", year: "2011" },
-  { youtubeId: "YVw7eJ0vGfM", artist: "Macklemore & Ryan Lewis", title: "Thrift Shop", year: "2012" },
+  { youtubeId: "nfWlot6h_JM", artist: "Taylor Swift", title: "Shake It Off", year: "2014" },
+  { youtubeId: "2Abk1jAONjw", artist: "Lady Gaga", title: "Just Dance", year: "2008" },
+  { youtubeId: "pok8H_KF1FA", artist: "Doja Cat", title: "Say So", year: "2020" },
+  { youtubeId: "kffacxfA7G4", artist: "Justin Bieber", title: "Baby ft. Ludacris", year: "2010" },
+  { youtubeId: "qeMFqkcPYcg", artist: "Eurythmics", title: "Sweet Dreams", year: "1983" },
+  { youtubeId: "Z85lxckrtzg", artist: "Michael Jackson", title: "Thriller", year: "1982" },
+  { youtubeId: "2yJgwwDcgV8", artist: "Nyan Cat", title: "Nyan Cat", year: "2011" },
+  { youtubeId: "SR6iYWJxHqs", artist: "Bruno Mars", title: "Grenade", year: "2010" },
+  { youtubeId: "tsMDKjb54EM", artist: "LMFAO", title: "Party Rock Anthem", year: "2011" },
+  { youtubeId: "QK8mJJJvaes", artist: "Macklemore & Ryan Lewis", title: "Thrift Shop", year: "2012" },
   { youtubeId: "8SbUC-UaAxE", artist: "Guns N' Roses", title: "November Rain", year: "1992" },
   { youtubeId: "k85mRPqvMbE", artist: "Crazy Frog", title: "Axel F", year: "2009" },
   { youtubeId: "L0MK7qz13bU", artist: "FROZEN", title: "Let It Go", year: "2013" },
   { youtubeId: "y6120QOlsfU", artist: "Darude", title: "Sandstorm", year: "2000" },
-  { youtubeId: "nlcIKh6sBtc", artist: "Lil Nas X", title: "Old Town Road", year: "2019" },
-  { youtubeId: "zABLecsR5UE", artist: "Justin Timberlake", title: "Can't Stop The Feeling!", year: "2016" },
+  { youtubeId: "r7qovpFAGrQ", artist: "Lil Nas X", title: "Old Town Road", year: "2019" },
+  { youtubeId: "ru0K8uYEZWw", artist: "Justin Timberlake", title: "Can't Stop The Feeling!", year: "2016" },
   { youtubeId: "CevxZvSJLk8", artist: "Katy Perry", title: "Roar", year: "2013" },
   { youtubeId: "QGJuMBdaqIw", artist: "Katy Perry", title: "Firework", year: "2010" },
-  { youtubeId: "09R8_2nJtjg", artist: "Maroon 5", title: "Sugar", year: "2015" },
-  { youtubeId: "YBHQbu5rbdQ", artist: "Black Eyed Peas", title: "I Gotta Feeling", year: "2009" },
-  { youtubeId: "6Mgqbai3fKo", artist: "Pitbull ft. Ke$ha", title: "Timber", year: "2013" },
-  { youtubeId: "8v_4O44sfjM", artist: "Christina Perri", title: "A Thousand Years", year: "2011" },
-  { youtubeId: "KQ6zr6kCPj8", artist: "LMFAO", title: "Party Rock Anthem", year: "2011" },
-  { youtubeId: "zpzdgmqIHOQ", artist: "Meghan Trainor", title: "All About That Bass", year: "2014" },
+  { youtubeId: "N1BcpzPGlYQ", artist: "Maroon 5", title: "Sugar", year: "2015" },
+  { youtubeId: "uSD4vsh1zDA", artist: "Black Eyed Peas", title: "I Gotta Feeling", year: "2009" },
+  { youtubeId: "hHUbLv4ThOo", artist: "Pitbull ft. Ke$ha", title: "Timber", year: "2013" },
+  { youtubeId: "rtOvBOTyX00", artist: "Christina Perri", title: "A Thousand Years", year: "2011" },
+  { youtubeId: "Ng_t5D8tVvM", artist: "LMFAO", title: "Sorry For Party Rocking", year: "2011" },
+  { youtubeId: "7PCkvCPvDXk", artist: "Meghan Trainor", title: "All About That Bass", year: "2014" },
   { youtubeId: "HMUDVMiITOU", artist: "DJ Snake & Lil Jon", title: "Turn Down for What", year: "2013" },
   { youtubeId: "LjhCEhWiKXk", artist: "Bruno Mars", title: "Just The Way You Are", year: "2010" },
   { youtubeId: "pRpeEdMmmQ0", artist: "Shakira ft. Freshlyground", title: "Waka Waka", year: "2010" },
-  { youtubeId: "nfWlot6h_JM", artist: "Taylor Swift", title: "Shake It Off", year: "2014" },
   { youtubeId: "e-ORhEE9VVg", artist: "Taylor Swift", title: "Blank Space", year: "2014" },
-  { youtubeId: "9bZkp7q19f0", artist: "PSY", title: "Gangnam Style", year: "2012" },
-  { youtubeId: "JF8BRvqGCNs", artist: "Lady Gaga", title: "Bad Romance", year: "2009" },
-  { youtubeId: "KlyXNRrsk4A", artist: "Shakira ft. Wyclef Jean", title: "Hips Don't Lie", year: "2006" },
+  { youtubeId: "_5-QkAVRkqU", artist: "Lady Gaga", title: "Bad Romance", year: "2009" },
   { youtubeId: "RBumgq5yVrA", artist: "Passenger", title: "Let Her Go", year: "2012" },
-  { youtubeId: "xUNqsfFUwhY", artist: "Charlie Puth", title: "We Don't Talk Anymore", year: "2016" },
-  { youtubeId: "PIh2xe4jnpk", artist: "Owl City", title: "Fireflies", year: "2009" },
-  { youtubeId: "YnwfTHpnGLY", artist: "Drake", title: "Hotline Bling", year: "2015" },
+  { youtubeId: "3AtDnEC4zak", artist: "Charlie Puth", title: "We Don't Talk Anymore", year: "2016" },
+  { youtubeId: "psuRGfAaju4", artist: "Owl City", title: "Fireflies", year: "2009" },
+  { youtubeId: "zt6aRKpf9T4", artist: "Drake", title: "Hotline Bling", year: "2015" },
+ //täst eteepäi ainaki oikeet idt
+  { youtubeId: "QNJL6nfu__Q", artist: "Michael Jackson", title: "They Don't Care About Us", year: "2009" },
+  { youtubeId: "NUTGr5t3MoY", artist: "Green Day", title: "Basket Case", year: "1994" },
+  { youtubeId: "ZyhrYis509A", artist: "Aqua", title: "Barbie Girl", year: "1997" },
+  { youtubeId: "etSbOs3aUqI", artist: "Gary Jules", title: "Mad World", year: "2001" },
+  { youtubeId: "bx1Bh8ZvH84", artist: "Oasis", title: "Wonderwall", year: "1995" },
+  { youtubeId: "JRfuAukYTKg", artist: "David Guetta ft Sia", title: "Titanium", year: "2011" },
+  { youtubeId: "pt8VYOfr8To", artist: "Taylor Swift", title: "Shake It Off", year: "2014" },
+  { youtubeId: "KlyXNRrsk4A", artist: "Katy Perry", title: "Last Friday Night", year: "2011" },
+  { youtubeId: "pt8VYOfr8To", artist: "Britney Spears", title: "Work Bitch", year: "2013" },
+  { youtubeId: "", artist: "", title: "", year: "" },
+  { youtubeId: "PIh2xe4jnpk", artist: "MAGIC!", title: "Rude", year: "2013" },
+  { youtubeId: "xUNqsfFUwhY", artist: "The Beatles", title: "Here Comes The Sun", year: "1969" },
+  { youtubeId: "YBHQbu5rbdQ", artist: "Fifth Harmony", title: "Worth It", year: "2015" },
+  { youtubeId: "zABLecsR5UE", artist: "Lewis Capaldi", title: "Someone You Loved", year: "2019" },
+  { youtubeId: "nlcIKh6sBtc", artist: "Lorde", title: "Royals", year: "2013" },
+  { youtubeId: "U0CGsw6h60k", artist: "Rihanna", title: "What's my name?", year: "2010" },
+  { youtubeId: "1G4isv_Fylg", artist: "Coldplay", title: "Paradise", year: "2011" },
+  { youtubeId: "YykjpeuMNEk", artist: "Coldplay", title: "Hymn For The Weekend", year: "2016" },
+  { youtubeId: "1k8craCGpgs", artist: "Journey", title: "Don't Stop Believin'", year: "1981" },
+  { youtubeId: "KEI4qSrkPAs", artist: "The Weeknd", title: "an't Feel My Face", year: "2015" },
   ],
     Hits2000to2025: [
         { youtubeId: "7Qp5vcuMIlk", artist: "Ed Sheeran", title: "Castle on the Hill", year: "2017" },
@@ -178,6 +205,11 @@ export default function HitsterGame() {
   { youtubeId: "8v_4O44sfjM", artist: "Christina Perri", title: "A Thousand Years", year: "2011" },
   { youtubeId: "zpzdgmqIHOQ", artist: "Meghan Trainor", title: "All About That Bass", year: "2014" },
   { youtubeId: "HMUDVMiITOU", artist: "DJ Snake & Lil Jon", title: "Turn Down for What", year: "2013" },
+  { youtubeId: "qV5lzRHrGeg", artist: "Carly Rae Jepsen", title: "I Really Like You", year: "2015" },
+  { youtubeId: "uelHwf8o7_U", artist: "Eminem", title: "Love The Way You Lie ft. Rihanna", year: "2010" },
+  { youtubeId: "ScNNfyq3d_w", artist: "Linkin Park", title: "Castle Of Glass", year: "2012" },
+  //alla 100% varmasti oikeet
+  { youtubeId: "YqeW9_5kURI", artist: "Major Lazer & DJ Snake", title: "Lean On", year: "2015" },
   ],
   };
   
@@ -197,6 +229,7 @@ export default function HitsterGame() {
       setGameStarted(true);
       setRoundCount(0);
       setTurnCount(1); // Start turn counter at 1
+      setTurnProgress(0); // Reset turn progress
       loadRandomSong();
     } else {
       alert("Please add players and set a round limit.");
@@ -238,18 +271,33 @@ export default function HitsterGame() {
   };
 
   const nextRound = () => {
-    if (roundCount < roundLimit - 1) {
-      setRoundCount(roundCount + 1);
-      setTurnCount(turnCount + 1); // Increment turn counter
-      setPlayerAnswers({ artist: "", title: "", year: "" });
-      setCurrentPlayerIndex((currentPlayerIndex + 1) % players.length);
-      setLastResult(null);
-      loadRandomSong();
-    } else {
-      alert("Game Over! You've reached the round limit.");
-      endGame();
+    if (roundCount + 1 >= roundLimit) { 
+        
+        setShowLeaderboardPopup(true); // Show leaderboard popup
+
+        return;
     }
-  };
+
+    if (turnProgress < players.length - 1) {
+        setTurnProgress(turnProgress + 1);
+        setCurrentPlayerIndex((currentPlayerIndex + 1) % players.length);
+        setPlayerAnswers({ artist: "", title: "", year: "" });
+        setLastResult(null);
+        loadRandomSong();
+    } else {
+        setRoundCount(roundCount + 1);
+        setTurnCount(turnCount + 1); 
+        setTurnProgress(0); 
+        setCurrentPlayerIndex(0); 
+        loadRandomSong();
+    }
+};
+
+ const closeLeaderboardAndGoToMenu = () => {
+  setShowLeaderboardPopup(false);
+  endGame();
+  setGameStarted(false);
+ };
 
   const skipSong = () => {
     loadRandomSong();
@@ -284,6 +332,14 @@ export default function HitsterGame() {
     });
   };
 
+  const adminSkipRound = () => {
+    loadRandomSong();  // This skips the current round without affecting the player skips
+  };
+  const goToMainMenu = () => {
+    setShowLeaderboard(false); // Hide the leaderboard
+    setGameStarted(false); // Reset the game state
+    
+  };
   const endGame = () => {
     setGameStarted(false);
     setRoundCount(0);
@@ -293,16 +349,22 @@ export default function HitsterGame() {
     setPlayerAnswers({ artist: "", title: "", year: "" });
     setCurrentPlayerIndex(0);
   };
-
-  const adminSkipRound = () => {
-    loadRandomSong();  // This skips the current round without affecting the player skips
+  
+  const getSortedPlayers = () => {
+    return Object.entries(scores)
+      .sort((a, b) => b[1] - a[1]) // Sort players by score in descending order
+      .map(([player, score], index) => ({
+        rank: index + 1,
+        player,
+        score
+      }));
   };
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white font-sans">
       {!gameStarted ? (
         <div className="max-w-md mx-auto p-4 bg-gradient-to-t from-purple-700 to-blue-600 rounded-lg shadow-lg text-center">
-          <h1 className="text-3xl font-bold mb-4">Hitster Game</h1>
+          <h1 className="text-3xl font-bold mb-4">Carlonjumalas's Hitster</h1>
           <input
             type="text"
             placeholder="Enter player name"
@@ -311,7 +373,7 @@ export default function HitsterGame() {
             onKeyDown={(e) => e.key === "Enter" && addPlayer()}
             className="p-2 rounded-lg mb-2 w-full"
           />
-          <button
+          <button 
             onClick={addPlayer}
             disabled={players.length >= 10}
             className="p-2 bg-yellow-500 hover:bg-yellow-400 rounded-lg text-lg w-full mb-2"
@@ -325,7 +387,7 @@ export default function HitsterGame() {
           >
             Start Game
           </button>
-
+  
           <div className="mt-4">
             <label className="text-lg">Select Playlist: </label>
             <select
@@ -338,7 +400,16 @@ export default function HitsterGame() {
               <option value="Hits2000to2025">2000-2025 Hits</option>
             </select>
           </div>
-
+  
+          <div className="mt-4">
+            {selectedPlaylist === "RockPlaylist" && (
+              <p className="text-lg">Rock Playlist has 53 songs, all correct.</p>
+            )}
+            {selectedPlaylist === "AllTimePopular" && (
+              <p className="text-lg">All Time Popular Playlist has 56 songs, all correct.</p>
+            )}
+          </div>
+  
           <div className="mt-4">
             <label className="text-lg">Set Round Limit: </label>
             <input
@@ -349,7 +420,7 @@ export default function HitsterGame() {
               className="p-2 rounded-lg mt-2"
             />
           </div>
-
+  
           <ul className="mt-4">
             {players.map((player, index) => (
               <li key={index} className="text-lg">{player}</li>
@@ -362,14 +433,14 @@ export default function HitsterGame() {
           <div className="w-1/4 p-4 bg-gradient-to-t from-purple-700 to-blue-600 rounded-lg shadow-lg">
             <h2 className="text-3xl font-bold mb-4 text-center">Current Player: {players[currentPlayerIndex]}</h2>
             <h3 className="text-xl text-center mb-4">Turn: {turnCount}</h3>
-
+  
             <h3 className="text-xl font-bold mb-4">Scores:</h3>
             <ul className="text-lg">
               {Object.entries(scores).map(([name, score]) => (
                 <li key={name}>{name}: {score} points</li>
               ))}
             </ul>
-
+  
             {/* Admin Mode: Add points and manage skips */}
             {adminMode && (
               <div>
@@ -399,6 +470,47 @@ export default function HitsterGame() {
                 </button>
               </div>
             )}
+            {showLeaderboardPopup && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-bold mb-4 text-black">Final Leaderboard</h2>
+            <ul className="text-lg text-black">
+                {getSortedPlayers().map(({ rank, player, score }) => (
+                    <li key={rank} className="mb-2">
+                        <span className="font-bold">#{rank}</span>: {player} - {score} points
+                    </li>
+                ))}
+            </ul>
+            <button
+                onClick={closeLeaderboardAndGoToMenu}
+                className="mt-4 p-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-white"
+            >
+                Back to Main Menu
+            </button>
+        </div>
+    </div>
+)}
+
+            {/* Victory Screen */}
+            {roundCount >= roundLimit && !gameStarted && showLeaderboard && (
+              <div className="text-center">
+                <h1 className="text-4xl font-bold mb-4 text-green-500">Game Over! Final Scores</h1>
+                <ul className="text-lg">
+                  {getSortedPlayers().map(({ rank, player, score }) => (
+                    <li key={rank} className="mb-2">
+                      <span className="font-bold">#{rank}</span>: {player} - {score} points
+                    </li>
+                  ))}
+                </ul>
+                <h2 className="text-2xl font-bold mt-4">Congratulations to the Winner(s)!</h2>
+                <button
+                  onClick={goToMainMenu}
+                  className="p-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-white mt-4"
+                >
+                  Back to Main Menu
+                </button>
+              </div>
+            )}
 
             {/* Admin Mode Toggle */}
             <div className="mt-4">
@@ -410,7 +522,7 @@ export default function HitsterGame() {
               </button>
             </div>
           </div>
-
+  
           {/* Right side - Game Controls */}
           <div className="w-3/4 p-4 bg-gradient-to-t from-purple-700 to-blue-600 rounded-lg shadow-lg">
             {song && (
@@ -427,15 +539,15 @@ export default function HitsterGame() {
                       style={{
                         position: "absolute",
                         top: 0,
-                        left: "125px", // Keep the box at the same position as the video
+                        left: "125px",
                         width: "100%",
                         height: "100%",
                         backgroundColor: "black",
-                        zIndex: 2, // Set higher z-index for the box to ensure it is above the video
+                        zIndex: 2,
                       }}
                     ></div>
                   )}
-
+  
                   <iframe
                     ref={iframeRef}
                     width="300"
@@ -447,13 +559,13 @@ export default function HitsterGame() {
                     style={{
                       position: "absolute",
                       left: "125px",
-                      zIndex: 1, 
+                      zIndex: 1,
                     }}
                   ></iframe>
                 </div>
               </div>
             )}
-
+  
             {/* Answer Inputs */}
             <div className="flex justify-between mb-4">
               <input
@@ -484,7 +596,7 @@ export default function HitsterGame() {
             >
               Submit Answer
             </button>
-
+  
             {lastResult && (
               <div className="bg-yellow-500 p-4 rounded-lg mb-4">
                 <h3>Correct Answer:</h3>
@@ -499,17 +611,7 @@ export default function HitsterGame() {
                   Next Round
                 </button>
               </div>
-            )}
-
-            {/* Skip Song Button */}
-            <div className="mt-4">
-              <button
-                onClick={skipSongPowerUp}
-                className="p-2 bg-purple-500 hover:bg-purple-400 rounded-lg text-white"
-              >
-                Skip Turn (You have {playerSkipCount[players[currentPlayerIndex]]} skips left)
-              </button>
-            </div>
+            )}         
           </div>
         </div>
       )}
