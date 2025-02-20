@@ -1,6 +1,6 @@
 /* Global Styles */
 :root {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Italic', sans-serif;
   margin: 0;
   padding: 0;
   background: linear-gradient(135deg, #6a11cb, #2575fc); /* Updated Gradient */
@@ -10,7 +10,7 @@
   height: 100vh;
   color: white;
   text-align: center;
-  transition: background 0.5s ease;
+  transition: background 1s ease;
 }
 
 body {
@@ -19,59 +19,87 @@ body {
   padding: 0;
   background: linear-gradient(135deg, #6a11cb, #2575fc);
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
-  height: 100vh;
-  color: white;
+  height: 1000vh;
+  color: rgb(255, 255, 255);
   text-align: center;
   transition: background 0.5s ease;
 }
 
-/* Container for game */
+/* Container for Game */
 .game-container {
+  display: flex;
+  justify-content: space-between; /* Spread out horizontally */
+  align-items: flex-start; 
+  width: 90vw; /* Give some space on the sides */
+  height: 90vh; /* Keep height but ensure it's not squished */
+  padding: 20px;
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 15px;
-  padding: 20px;
-  width: 90%;
-  max-width: 800px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Title */
-h1, h2, h3 {
-  color: #fff;
-  font-size: 24px;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+/* Player List Card (Left side) */
+.player-card, .game-card {
+  flex-grow: 10; 
+  width: 545%; /* Spread them out horizontally */
+  padding: 120px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 100px;
+}
+.player-card {
+  width: 530%; 
+  max-height: 580vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex;
 }
 
-/* Buttons */
+.player-card ul {
+  list-style: none;
+  padding: 1;
+  margin: 1;
+}
+
+.player-card li {
+  margin: 50px 0;
+  font-size: 50px;
+  text-align: center;
+}
+
+/* Game Content */
+.game-card {
+  width: 150000%;
+}
+
+.game-card h2 {
+  font-size: 2px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
+/* Buttons inside forms should be spaced */
 button {
-  background-color: #2575fc;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: transform 0.2s ease, background-color 0.3s ease;
+  display: block;
+  width: auto;
+  margin: 10px auto; 
 }
 
 button:hover {
-  transform: scale(1.05);
-  background-color: #6a11cb;
+  transform: scale(1.0);
+  background-color: #802dda;
 }
 
-/* Input Fields */
+/* Adjust input fields */
 input[type="text"], input[type="number"], select {
   padding: 8px;
   border-radius: 5px;
   border: 1px solid #ddd;
-  margin: 5px 0 15px;
-  width: 80%;
-  max-width: 300px;
+  margin: 5px;
+  width: 100%; /* Increase width for better spacing */
+  max-width: 400px; /* Allow for wider inputs */
 }
 
 input[type="text"]:focus, input[type="number"]:focus, select:focus {
@@ -83,26 +111,13 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
 /* Card-like Boxes */
 .card {
   background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 10px;
+  border-radius: 100px;
   padding: 15px;
   margin-bottom: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-.card h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
 
-/* Player List */
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  margin: 5px 0;
-}
 
 /* Transition Effects for Elements */
 .fade-in {
@@ -127,3 +142,25 @@ iframe {
 iframe:hover {
   transform: scale(1.05);
 }
+
+/* Keyframe animation for fading in and scaling */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1); /* Slightly enlarge at 50% */
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8); /* Shrink back to original */
+  }
+}
+
+/* Apply the animation to the title */
+.title-animation {
+  animation: fadeInScale 2s ease-in-out infinite alternate;
+}
+
