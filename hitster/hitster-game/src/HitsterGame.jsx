@@ -1,4 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import MainMenu from "./components/MainMenu";
+import PlayerList from "./components/PlayerList";
+import ScoreBoard from "./components/ScoreBoard";
+import GameArea from "./components/GameArea";
 
 const playlists = {
   RockPlaylist: [
@@ -747,7 +751,6 @@ export default function HitsterGame() {
   const [newPlayer, setNewPlayer] = useState("");
   const [videoVisible, setVideoVisible] = useState(false);
   const [lastResult, setLastResult] = useState(null);
-  const [correctAnswersVisible, setCorrectAnswersVisible] = useState(false);
   const [playedSongs, setPlayedSongs] = useState([]);
   const [playerSkipCount, setPlayerSkipCount] = useState({});
   const [roundLimit, setRoundLimit] = useState(0);
@@ -759,26 +762,45 @@ export default function HitsterGame() {
   const [showLeaderboardPopup, setShowLeaderboardPopup] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [volume, setVolume] = useState(100);
-  const youtubePlayer = useRef(null);
+  const [correctAnswersVisible, setCorrectAnswersVisible] = useState(false);
 
   
   const iframeRef = useRef(null);
+  const playerRef = useRef(null);
 
-  const addPlayer = () => {
-    if (newPlayer.trim() !== "" && players.length < 10) {
-      setPlayers([...players, newPlayer]);
-      setScores({ ...scores, [newPlayer]: 0 });
-      setPlayerSkipCount({ ...playerSkipCount, [newPlayer]: 3 });
-      setNewPlayer("");
-    }
-  };
+  useEffect(() => {
+  if (window.YT && iframeRef.current && !playerRef.current) {
+    playerRef.current = new window.YT.Player(iframeRef.current, {
+      events: {
+        onReady: onPlayerReady,
+      },
+    });
+  }
+}, []);
+
+
+ 
+  
+  function addPlayer() {
+  const trimmed = newPlayer.trim();
+  if (!trimmed) return;
+  if (trimmed.length > 10) {
+    alert("Player name must be 16 characters or fewer.");
+    return;
+  }
+  if (!players.includes(trimmed)) {
+    setPlayers([...players, trimmed]);
+    setScores((prev) => ({ ...prev, [trimmed]: 0 }));
+  }
+  setNewPlayer("");
+}
   
   
   const startGame = () => {
     if (players.length > 0 && roundLimit > 0) {
       setGameStarted(true);
       setRoundCount(0);
-      setTurnCount(1); // Start turn counter at 1
+      setTurnCount(1); 
       setTurnProgress(0); // Reset turn progress
       loadRandomSong();
     } else {
@@ -801,40 +823,20 @@ export default function HitsterGame() {
     }
   };
 
-  const initializeYouTubePlayer = () => {
-    if (iframeRef.current) {
-      playerRef.current = new window.YT.Player(iframeRef.current, {
-        events: {
-          'onReady': onPlayerReady,
-        },
-      });
-    }
-  };
- 
 
   
   const onPlayerReady = (event) => {
-    // Set initial volume
-    event.target.setVolume(volume);
-  };
+  playerRef.current = event.target; // Save the player instance correctly
+  event.target.setVolume(volume);
+};
   
 
-const handleVolumeChange = (newVolume) => {
-  setVolume(newVolume);
-  try {
-    if (iframeRef.current) {
-      const player = iframeRef.current.contentWindow;
-      // Send a postMessage to the YouTube player
-      player.postMessage(JSON.stringify({
-        event: 'command',
-        func: 'setVolume',
-        args: [newVolume]
-      }), '*');
+ const handleVolumeChange = (newVolume) => {
+    setVolume(newVolume);
+    if (playerRef.current && playerRef.current.setVolume) {
+      playerRef.current.setVolume(newVolume);
     }
-  } catch (error) {
-    console.error('Error changing volume:', error);
-  }
-};
+  };
 
   const checkAnswer = () => {
     let points = 0;
@@ -856,33 +858,32 @@ const handleVolumeChange = (newVolume) => {
   };
 
   const nextRound = () => {
-    if (roundCount + 1 >= roundLimit) { 
-        
-        setShowLeaderboardPopup(true); // Show leaderboard popup
-
+    // If last player of round
+    if (turnProgress + 1 >= players.length) {
+      // If last round reached
+      if (roundCount + 1 >= roundLimit) {
+        setShowLeaderboardPopup(true);
         return;
-    }
-
-    if (turnProgress < players.length - 1) {
-        setTurnProgress(turnProgress + 1);
-        setCurrentPlayerIndex((currentPlayerIndex + 1) % players.length);
-        setPlayerAnswers({ artist: "", title: "", year: "" });
-        setLastResult(null);
-        loadRandomSong();
+      }
+      // New round
+      setRoundCount(roundCount + 1);
+      setTurnProgress(0);
+      setCurrentPlayerIndex(0);
     } else {
-        setRoundCount(roundCount + 1);
-        setTurnCount(turnCount + 1); 
-        setTurnProgress(0); 
-        setCurrentPlayerIndex(0); 
-        loadRandomSong();
+      // Next player in same round
+      setTurnProgress(turnProgress + 1);
+      setCurrentPlayerIndex(currentPlayerIndex + 1);
     }
-};
+    setPlayerAnswers({ artist: "", title: "", year: "" });
+    setLastResult(null);
+    loadRandomSong();
+  };
 
  const closeLeaderboardAndGoToMenu = () => {
-  setShowLeaderboardPopup(false);
-  endGame();
-  setGameStarted(false);
- };
+    setShowLeaderboardPopup(false);
+    endGame();
+    setGameStarted(false);
+  };
 
   const skipSong = () => {
     loadRandomSong();
@@ -925,15 +926,15 @@ const handleVolumeChange = (newVolume) => {
     setGameStarted(false); // Reset the game state
     
   };
-  const endGame = () => {
-    setGameStarted(false);
+   const endGame = () => {
     setRoundCount(0);
-    setTurnCount(0);
+    setTurnCount(1);
     setPlayedSongs([]);
     setScores({});
     setPlayerAnswers({ artist: "", title: "", year: "" });
     setCurrentPlayerIndex(0);
   };
+
   
   const getSortedPlayers = () => {
     return Object.entries(scores)
@@ -950,342 +951,100 @@ const handleVolumeChange = (newVolume) => {
   const toggleRules = () => setShowRules(!showRules);
 
 
-  //ui bullshit
-
 return (
-  <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-8 text-white font-sans">
-    {!gameStarted ? (
-      <div className="max-w-md mx-auto p-4 bg-gradient-to-t from-purple-700 to-blue-600 rounded-lg shadow-lg text-center">
-        <h1 className="text-3xl font-bold mb-4 title-animation">Carlonjumalas's Hitster</h1>
-        
-        <input
-          type="text"
-          placeholder="Enter player name"
-          value={newPlayer}
-          onChange={(e) => setNewPlayer(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && addPlayer()}
-          className="p-2 rounded-lg mb-2 w-full"
+ 
+    
+  <div className="bg-black min-h-screen">
+    {/* Top Bar */}
+     <div className="title-text  top-0 ">
+      NOTHitster</div>
+   
+
+
+  <div className="game-container">
+    {/* LEFT: Player List */}
+    <div className="card-sides">
+      <PlayerList players={players} />
+    </div>
+
+
+    {/* MIDDLE: Game Area or Menu */}
+    <div className="card">
+      {!gameStarted ? (
+        <MainMenu
+          players={players}
+          newPlayer={newPlayer}
+          setNewPlayer={setNewPlayer}
+          addPlayer={addPlayer}
+          startGame={startGame}
+          roundLimit={roundLimit}
+          setRoundLimit={setRoundLimit}
+          selectedPlaylist={selectedPlaylist}
+          setSelectedPlaylist={setSelectedPlaylist}
+          goToMainMenu={goToMainMenu}
+          toggleRules={toggleRules}
+          showRules={showRules}
         />
-        <button 
-          onClick={addPlayer}
-          disabled={players.length >= 10}
-          className="p-2 bg-yellow-500 hover:bg-yellow-400 rounded-lg text-lg w-full mb-2"
-        >
-          Add Player
-        </button>
-        <button
-          onClick={startGame}
-          disabled={players.length < 1 || roundLimit <= 0}
-          className="p-2 bg-green-500 hover:bg-green-400 rounded-lg text-lg w-full"
-        >
-          Start Game
-        </button>
-        <button
-          onClick={toggleRules}
-          className="p-2 mt-4 bg-indigo-500 hover:bg-indigo-400 rounded-lg text-white"
-        >
-          Rules
-        </button>
+      ) : (
+        <GameArea
+          song={song}
+          videoVisible={videoVisible}
+          setVideoVisible={setVideoVisible}
+          iframeRef={iframeRef}
+          playerAnswers={playerAnswers}
+          setPlayerAnswers={setPlayerAnswers}
+          checkAnswer={checkAnswer}
+          lastResult={lastResult}
+          nextRound={nextRound}
+          volume={volume}
+          handleVolumeChange={handleVolumeChange}
+          adminMode={adminMode}
+          toggleAdminMode={toggleAdminMode}
+          players={players}
+          scores={scores}
+          modifyPlayerScore={modifyPlayerScore}
+          adminSkipRound={adminSkipRound}
+        />
+      )}
+    </div>
 
-        {/* Rulebook Modal */}
-        {showRules && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center w-1/2">
-              <h2 className="text-2xl font-bold mb-4">Game Rules</h2>
-              <p className="text-lg mb-4">1. Players take turns guessing the artist, title, and year of a song.</p>
-              <p className="text-lg mb-4">2. Correct answers score points for the player.</p>
-              <p className="text-lg mb-4">3. Players can skip a song up to 3 times per game.</p>
-              <p className="text-lg mb-4">4. The player with the highest score at the end of the game wins!</p>
-              <button
-                onClick={toggleRules}
-                className="p-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-white"
-              >
-                Close Rules
-              </button>
-            </div>
-          </div>
-        )}
+{/* RIGHT: Scoreboard */}
+<div className="card-sides flex flex-col items-center">
+  {gameStarted && <ScoreBoard scores={scores} />}
 
-        <div className="mt-4">
-          <label className="text-lg">Select Playlist: </label>
-          <select
-            value={selectedPlaylist}
-            onChange={(e) => setSelectedPlaylist(e.target.value)}
-            className="p-2 rounded-lg mt-2"
-          >
-            <option value="RockPlaylist">Rock Playlist</option>
-            <option value="AllTimePopular">All Time Popular</option>
-            <option value="Hits2000to2025">2000-2025 Hits</option>
-            <option value="AnythingGoes">Anything Goes!</option>
-            <option value="GIGALIST">GIGA LIST</option>
-          </select>
-        </div>
+  
 
-        <div className="mt-4">
-          {selectedPlaylist === "RockPlaylist" && (
-            <p className="text-lg">Rock Playlist has 53 songs, all correct.</p>
-          )}
-          {selectedPlaylist === "AllTimePopular" && (
-            <p className="text-lg">All Time Popular Playlist has 56 songs, all correct.</p>
-          )}
-          {selectedPlaylist === "AnythingGoes" && (
-            <p className="text-lg">All genres also has not popular songs. Has 159 songs.</p>
-          )}
-          {selectedPlaylist === "Hits2000to2025" && (
-            <p className="text-lg">List of popular hits from 2000 to 2025.</p>
-          )}
-          {selectedPlaylist === "GIGALIST" && (
-            <p className="text-lg">All lists put together.</p>
-          )}
-        </div>
+  {/* RULES MODAL */}
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-start z-50 pt-20">
+      <div className="bg-white text-black p-6 rounded-xl shadow-lg max-w-xl w-full relative">
 
-        <div className="mt-4">
-          <label className="text-lg">Set Round Limit: </label>
-          <input
-            type="number"
-            min="1"
-            value={roundLimit}
-            onChange={(e) => setRoundLimit(parseInt(e.target.value, 10))}
-            className="p-2 rounded-lg mt-2"
-          />
-        </div>
-
-        <ul className="mt-4">
-          {players.map((player, index) => (
-            <li key={index} className="text-lg">{player}</li>
-          ))}
-        </ul>
+        <h2 className="text-players font-bold mb-4">Game Rules</h2>
+        <p>
+          <p className="text-players mb-4">
+            1. Players take turns guessing the artist, title, and year of a song.
+          </p>
+          <p className="text-players mb-4">
+            2. Correct answers score points for the player.
+          </p>
+          <p className="text-players mb-4">
+            3. Players can skip a song up to 3 times per game.
+          </p>
+          <p className="text-players mb-4">
+            4. The player with the highest score at the end of the game wins!
+          </p>
+        </p>
       </div>
-    ) : (
-      <div className="flex">
-        {/* Left side - Player Info and Scores */}
-        <div className="w-1/4 p-4 bg-gradient-to-t from-purple-700 to-blue-600 rounded-lg shadow-lg">
-          <h2 className="text-3xl font-bold mb-4 text-center">Current Player: {players[currentPlayerIndex]}</h2>
-          <h3 className="text-xl text-center mb-4">Turn Count: {turnCount}</h3>
+    </div>
 
-          <h3 className="text-xl font-bold mb-4">Scores:</h3>
-          <ul className="text-lg">
-            {Object.entries(scores).map(([name, score]) => (
-              <li key={name}>{name}: {score} points</li>
-            ))}
-          </ul>
-
-          {/* Admin Mode: Add points and manage skips */}
-          {adminMode && (
-            <div>
-              <h3 className="text-lg font-bold mb-4">Admin Controls:</h3>
-              {players.map((player) => (
-                <div key={player} className="flex justify-between items-center mb-2">
-                  <span>{player}: {scores[player]} points</span>
-                  <button
-                    onClick={() => modifyPlayerScore(player, 1)}
-                    className="p-2 bg-green-500 hover:bg-green-400 rounded-lg text-white"
-                  >
-                    Add 1 Point
-                  </button>
-                  <button
-                    onClick={() => modifyPlayerScore(player, -1)}
-                    className="p-2 bg-red-500 hover:bg-red-400 rounded-lg text-white"
-                  >
-                    Remove 1 Point
-                  </button>
-                </div>
-              ))}
-              <button
-                onClick={adminSkipRound}
-                className="p-2 bg-orange-500 hover:bg-orange-400 rounded-lg text-white mt-4"
-              >
-                Skip Round (No Power-Up Deduction)
-              </button>
-            </div>
-          )}
-
-          {showLeaderboardPopup && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-              <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                <h2 className="text-5x4 font-bold mb-4 text-green">Final Leaderboard</h2>
-                <ul className="text-lg text-black">
-                  {getSortedPlayers().map(({ rank, player, score }) => (
-                    <li key={rank} className="mb-2">
-                      <span className="font-bold">#{rank}</span>: {player} - {score} points
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={closeLeaderboardAndGoToMenu}
-                  className="mt-4 p-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-white"
-                >
-                  Back to Main Menu
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Victory Screen */}
-          {roundCount >= roundLimit && !gameStarted && showLeaderboard && (
-            <div className="text-center">
-              <h1 className="text-4xl font-bold mb-4 text-green-500">Game Over! Final Scores</h1>
-              <ul className="text-lg">
-                {getSortedPlayers().map(({ rank, player, score }) => (
-                  <li key={rank} className="mb-2">
-                    <span className="font-bold">#{rank}</span>: {player} - {score} points
-                  </li>
-                ))}
-              </ul>
-              <h2 className="text-2xl font-bold mt-4">Congratulations to the Winner! {player}</h2>
-              <button
-                onClick={goToMainMenu}
-                className="p-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-white mt-4"
-              >
-                Back to Main Menu
-              </button>
-            </div>
-          )}
-
-          {/* Admin Mode Toggle */}
-          <div className="mt-4">
-            <button
-              onClick={toggleAdminMode}
-              className="p-2 bg-indigo-500 hover:bg-indigo-400 rounded-lg text-white"
-            >
-              {adminMode ? "Exit Admin Mode" : "Enter Admin Mode"}
-            </button>
-          </div>
-        </div>
-
-        {/* Right side - Game Controls */}
-        <div className="w-3/4 p-4 bg-gradient-to-t from-purple-700 to-blue-600 rounded-lg shadow-lg">
-          {song && (
-            <div className="flex justify-end mb-4">
-              <button
-                onClick={() => setVideoVisible(!videoVisible)}
-                className="p-2 bg-orange-500 hover:bg-orange-400 rounded-lg mb-4"
-              >
-                {videoVisible ? "Hide Video" : "Show Video"}
-              </button>
-              <div style={{ position: "relative", width: "300px", height: "200px" }}>
-                {!videoVisible && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: "125px",
-                      width: "100%",
-                      height: "100%",
-                      backgroundColor: "black",
-                      zIndex: 2,
-                    }}
-                  ></div>
-                )}
-
-                <iframe
-                  ref={iframeRef}
-                  width="300"
-                  height="200"
-                  src={`https://www.youtube.com/embed/${song.youtubeId}?autoplay=1&enablejsapi=1`}
-                  title="YouTube Video"
-                  allow="autoplay"
-                  frameBorder="0"
-                  style={{
-                    position: "absolute",
-                    left: "125px",
-                    zIndex: 1,
-                  }}
-                ></iframe>
-              </div>
-            </div>
-          )}
-          <div className="flex items-center space-x-2 mb-4">
-            <button
-              onClick={() => setVideoVisible(!videoVisible)}
-              className="p-2 bg-orange-500 hover:bg-orange-400 rounded-lg"
-            >
-              {videoVisible ? "Hide Video" : "Show Video"}
-            </button>
-            <button
-              onClick={() => {
-                try {
-                  if (iframeRef.current) {
-                    const player = iframeRef.current.contentWindow;
-                    // Get current time and add 15 seconds
-                    player.postMessage(JSON.stringify({
-                      event: 'command',
-                      func: 'seekTo',
-                      args: ['50', true]
-                    }), '*');
-                  }
-                } catch (error) {
-                  console.error('Error skipping forward:', error);
-                }
-              }}
-              className="p-2 bg-blue-500 hover:bg-blue-400 rounded-lg"
-            >
-              Skip +15 Seconds
-            </button>
-            {/* Volume Control */}
-            <div className="flex items-center space-x-2">
-              <span className="text-white">Volume:</span>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume}
-                onChange={(e) => handleVolumeChange(parseInt(e.target.value))}
-                className="w-32"
-              />
-              <span className="text-white">{volume}%</span>
-            </div>
-          </div>
-
-          {/* Answer Inputs */}
-          <div className="flex justify-between mb-4">
-            <input
-              type="text"
-              placeholder="Artist Name"
-              value={playerAnswers.artist}
-              onChange={(e) => setPlayerAnswers({ ...playerAnswers, artist: e.target.value })}
-              className="p-2 rounded-lg w-full mr-2"
-            />
-            <input
-              type="text"
-              placeholder="Song Title"
-              value={playerAnswers.title}
-              onChange={(e) => setPlayerAnswers({ ...playerAnswers, title: e.target.value })}
-              className="p-2 rounded-lg w-full mr-2"
-            />
-            <input
-              type="text"
-              placeholder="Release Year"
-              value={playerAnswers.year}
-              onChange={(e) => setPlayerAnswers({ ...playerAnswers, year: e.target.value })}
-              className="p-2 rounded-lg w-full"
-            />
-          </div>
-          <button
-            onClick={checkAnswer}
-            className="p-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-lg w-full mb-4"
-          >
-            Submit Answer
-          </button>
-
-          {lastResult && (
-            <div className="bg-yellow-500 p-4 rounded-lg mb-4">
-              <h3>Correct Answer:</h3>
-              <p>Artist: {lastResult.correctArtist}</p>
-              <p>Title: {lastResult.correctTitle}</p>
-              <p>Year: {lastResult.correctYear}</p>
-              <p>Points Earned: {lastResult.playerPoints}</p>
-              <button
-                onClick={nextRound}
-                className="p-2 bg-green-500 hover:bg-green-400 rounded-lg"
-              >
-                Next Round
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    )}
+</div>
   </div>
-  );
-}
+     
+
+    {/* Bottom Bar */}
+    <div className="absolute bottom-0 w-full text-center p-2 text-sm text-gray-400 bg-transparent z-50">
+      © Carlonjumala
+    </div>
+  </div>
+ 
+)
+};

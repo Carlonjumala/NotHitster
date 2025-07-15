@@ -1,13 +1,5 @@
-/* Global Styles */
 :root {
   font-family: 'Italic', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, #6a11cb, #2575fc); /* Updated Gradient */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   color: white;
   text-align: center;
   transition: background 1s ease;
@@ -17,60 +9,92 @@ body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  height: 1000vh;
-  color: rgb(255, 255, 255);
+  background: linear-gradient(135deg, #df5851, #612723);
+  color: white;
   text-align: center;
-  transition: background 0.5s ease;
+  transition: background 1s ease;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; /* Optional: prevents scrollbars if using fixed layout */
 }
 
-/* Container for Game */
+.logo-img {
+  max-width: 200px;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body::before {
+  content: "";
+  position: fixed;  
+  top: -50%;
+  left: -50%;
+  width: 400%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #c9b92d, #ff6a00, #f3b450, #612723, #c9b92d);
+  z-index: -1;
+  animation: spinBackground 20s linear infinite;
+  transform-origin: center;
+  filter: blur(8px);
+}
+
+
+.card {
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  overflow-y: auto;
+  padding-top: 20px;
+  height: 90%;
+  overflow-y: scroll;
+  scrollbar-width: none;  
+}
+
+.card-sides {
+  border-radius: 20px;
+  padding: 20px;
+  overflow-y: auto;
+  justify-content: center;
+  flex: 1;
+  overflow: hidden;
+  overflow-y: scroll;
+  scrollbar-width: none;  
+}
+
+
+
+.title-text {
+  font-size: 36px;
+  font-weight: bold;
+  color: #ffe8c3;
+  text-shadow: #000 0px 0px 2px;
+  margin-bottom: 20px;
+  font-display: swap;
+}
 .game-container {
   display: flex;
-  justify-content: space-between; /* Spread out horizontally */
-  align-items: flex-start; 
-  width: 90vw; /* Give some space on the sides */
-  height: 90vh; /* Keep height but ensure it's not squished */
+  flex-direction: row;
+  justify-content: center;
+  height: 90vh;
+  gap: px;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+.main-menu {
+  image-rendering: auto;
 }
 
-/* Player List Card (Left side) */
-.player-card, .game-card {
-  flex-grow: 10; 
-  width: 545%; /* Spread them out horizontally */
-  padding: 120px;
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 100px;
-}
-.player-card {
-  width: 530%; 
-  max-height: 580vh;
-  display: flex;
-  flex-direction: column;
-  align-items: flex;
-}
-
-.player-card ul {
-  list-style: none;
-  padding: 1;
-  margin: 1;
-}
-
-.player-card li {
-  margin: 50px 0;
-  font-size: 50px;
+.text-players {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ffe8c3;
   text-align: center;
-}
-
-/* Game Content */
-.game-card {
-  width: 150000%;
+  text-shadow: #000 0px 0px 2px;
+  font-display: swap;
+  text-transform: uppercase;
 }
 
 .game-card h2 {
@@ -80,42 +104,91 @@ body {
 }
 
 
-/* Buttons inside forms should be spaced */
 button {
-  display: block;
-  width: auto;
-  margin: 10px auto; 
+  background: linear-gradient(  #c0bc99, #c7be73);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 2px;
+  margin-bottom: 5px;
 }
 
 button:hover {
-  transform: scale(1.0);
-  background-color: #802dda;
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #a1ffaf, #ade4b5);
 }
-
 /* Adjust input fields */
 input[type="text"], input[type="number"], select {
   padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
+  border-radius: 15px;
+  border: 1px solid #c9b92d;
   margin: 5px;
-  width: 100%; /* Increase width for better spacing */
-  max-width: 400px; /* Allow for wider inputs */
+  width: 90%; 
+  max-width: 400px; 
+  margin-right: 20px;
+  
+}
+.volume-text {
+ 
+  color: #c9b92d;
+  margin-right: 10px;
+}
+.custom-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Track color for Firefox */
+.custom-slider::-moz-range-track {
+  background: #c9b92d;
+  height: 6px;
+  border-radius: 5px;
+}
+
+/* Track color for Chrome, Safari */
+.custom-slider::-webkit-slider-runnable-track {
+  background: #c9b92d;
+  height: 6px;
+  border-radius: 5px;
+}
+
+/* Thumb for Chrome, Safari */
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #c9b92d;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -5px; /* Align thumb vertically with track */
+}
+
+/* Thumb for Firefox */
+.custom-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #c9b92d;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 input[type="text"]:focus, input[type="number"]:focus, select:focus {
   outline: none;
-  border-color: #2575fc;
-  background-color: #fff;
+  border-color: #df5851;
+  background-color: #a1ffaf;
 }
 
-/* Card-like Boxes */
-.card {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 100px;
-  padding: 15px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
 
 
 
@@ -144,23 +217,35 @@ iframe:hover {
 }
 
 /* Keyframe animation for fading in and scaling */
-@keyframes fadeInScale {
+@keyframes colorSpin {
   0% {
-    opacity: 0;
-    transform: scale(0.8);
+    background: linear-gradient(135deg, #f5b450, #ffffff);
+  }
+  25% {
+    background: linear-gradient(135deg, #ff6a00, #ffcc00);
   }
   50% {
-    opacity: 1;
-    transform: scale(1.1); /* Slightly enlarge at 50% */
+    background: linear-gradient(135deg, #f5b450, #0083b0);
+  }
+  75% {
+    background: linear-gradient(135deg, #7b2ff7, #f107a3);
   }
   100% {
-    opacity: 0;
-    transform: scale(0.8); /* Shrink back to original */
+    background: linear-gradient(135deg, #f5b450, #ffffff);
   }
 }
 
 /* Apply the animation to the title */
 .title-animation {
-  animation: fadeInScale 2s ease-in-out infinite alternate;
+  animation: fadeIn 2s ease-in-out infinite alternate;
+}
+
+@keyframes spinBackground {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
