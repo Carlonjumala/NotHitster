@@ -1,4 +1,5 @@
 import React from "react";
+import HitsterLogo from '../assets/HitsterLogo.png';
 
 export default function MainMenu({
   newPlayer,
@@ -52,10 +53,10 @@ export default function MainMenu({
   <button onClick={startGame} className="w-full max-w-md block">Start Game</button>
 
   <img
-    src="src/assets/HitsterLogo.png"
-    alt="Hitster Logo"
-    className="logo-img title-animation"
-  />
+  src={HitsterLogo}
+  alt="Hitster Logo"
+  className="logo-img title-animation"
+/>
 </div>
 
     
